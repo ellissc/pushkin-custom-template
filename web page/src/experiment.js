@@ -1,6 +1,9 @@
 import jsPsych from "pushkin-jspsych";
-const stimArray = require("./stim").default;
+const stimArray = require("./stim.js").default;
 const consent = require("./consent.js").default;
+
+// console.log(stimArray);
+// console.log(stimArray[0]);
 
 const timeline = [];
 
@@ -24,34 +27,50 @@ var instructions = {
   stimulus: `
           <h1>Instructions</h1>
           <p>In this study, you will be asked to complete a variety of tasks.</p>
-          <p>In the first... In the second... In the third...</p>
+          <p>In the first...</p>
+          <p>In the second...</p>
+          <p>In the third...</p>
         `,
   choices: ["Continue"],
 };
 timeline.push(instructions);
 
-var trial = {
-  timeline: [
-    {
-      type: "html-keyboard-response",
-      stimulus:
-        "<div>Press spacebar when you are ready to read some text.</div>",
+// var trial = {
+//   timeline: [
+//     {
+//       type: "survey-text",
+//       preamble: () => jsPsych.timelineVariable("word1"),
+//       questions: [{ prompt: "" }, { prompt: "" }, { prompt: "" }],
+//     },
+//   ],
+//   timeline_variables: stimArray,
+// };
+
+// timeline.push(trial);
+
+for (var i = 0; i < stimArray.length; i++) {
+  var trial = {
+    type: "survey-text",
+    preamble: stimArray[i]["word1"],
+    questions: [{ prompt: "" }, { prompt: "" }, { prompt: "" }],
+    on_finish: function (data) {
+      console.log(data);
     },
-    {
-      type: "survey-text",
-      preamble:
-        "Please provide the first three words that come to mind: " +
-        jsPsych.timelineVariable("word1"),
-      questions: [
-        { prompt: "", placeholder: "First word" },
-        { prompt: "", placeholder: "Second word" },
-        { prompt: "", placeholder: "Third word" },
-      ],
-    },
-  ],
-  timeline_variables: stimArray,
+  };
+
+  timeline.push(trial);
+}
+
+// Placeholder for model
+
+var participant_info = {
+  type: "survey-text",
+  preamble: "What is your correct age?",
+  questions: [{ prompt: "" }],
 };
 
-timeline.push(trial);
+timeline.push(participant_info);
+
+// jsPsych.data.displayData("csv");
 
 export default timeline;
