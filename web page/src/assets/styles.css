@@ -1,0 +1,12 @@
+#cue-words{
+  color: red;
+  font-weight: bold;
+}
+
+#welcome-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  overflow-wrap: break-word;
+  max-width: 150vh;
+}
