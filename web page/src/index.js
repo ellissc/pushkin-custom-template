@@ -9,6 +9,7 @@ const fs = require("fs");
 
 //stylin'
 import "./assets/experiment.css";
+import "./assets/styles.css";
 
 const expConfig = jsYaml.load(fs.readFileSync("../config.yaml"), "utf8");
 
