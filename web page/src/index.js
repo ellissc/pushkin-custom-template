@@ -47,6 +47,8 @@ class quizComponent extends React.Component {
       display_element: document.getElementById("jsPsychTarget"),
       timeline: timeline,
       on_finish: this.endExperiment.bind(this),
+      show_progress_bar: true,
+      auto_update_progress_bar: true,
     });
 
     document.getElementById("jsPsychTarget").focus();
