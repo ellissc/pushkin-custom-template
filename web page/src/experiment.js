@@ -25,11 +25,11 @@ timeline.push(welcome);
 var instructions = {
   type: "html-button-response",
   stimulus: `
-          <h1>Instructions</h1>
+         <h1>Instructions</h1>
           <p>In this study, you will be asked to complete a variety of tasks.</p>
-          <p>In the first...</p>
-          <p>In the second...</p>
-          <p>In the third...</p>
+          <p>In the first task, you will view a word and provide the first three words that come to mind.</p>
+          <p>Please separate each word by a [space/enter/comma...]</p>
+          <p>At the end of the experiment we will guess your age based on your answers!</p>
         `,
   choices: ["Continue"],
 };
