@@ -38,7 +38,7 @@ var instructions = {
           <p>In this quiz, you will be asked to provide the first three words that come to mind for a cue!</p>
           <p>Try to respond as quickly as you can. You do not need to fill all three boxes.</p>
           </br>
-          <p>At the end of the quiz, we will use <b>advanced space-age artificial intelligence</b> guess your age based on your answers!</p>
+          <p>At the end of the quiz, we will use <b>advanced <i>space-age</i> artificial intelligence</b> guess your age based on your answers!</p>
         `,
   choices: ["Continue"],
 };
@@ -60,11 +60,24 @@ timeline.push(instructions);
 var example_trial = {
   type: "survey-text",
   preamble:
-    "\n\n\nHere is an example: 'potato'. \nPlease enter the first three words that come to mind.",
-  questions: [{ prompt: "" }, { prompt: "" }, { prompt: "" }],
+    "\n\n\nHere is an example.\nPlease enter the first three words that come to mind.",
+  questions: [
+    { prompt: "Potato", name: "name-potato" },
+    { prompt: "" },
+    { prompt: "" },
+  ],
+  data: { cue: "potato" },
 };
 
 timeline.push(example_trial);
+
+// var html_version = {
+//   type: "survey-html-form",
+//   preamble: "preamble information",
+//   html: '<p>Potato \n <input name="potato" type="text" id="assoc1"/> \n <input name="potato2" type="text" id="assoc2"/> \n <input name="potato3" type="text" id="assoc3"/></p>',
+// };
+
+// timeline.push(html_version);
 
 var feedback = {
   type: "html-button-response",
@@ -77,24 +90,22 @@ timeline.push(feedback);
 for (var i = 0; i < stimArray.length; i++) {
   var trial = {
     type: "survey-text",
-    preamble: "\n\n\n\n\n" + stimArray[i]["word1"],
+    preamble: "\n\n\n\n\n",
     questions: [
       {
-        prompt: "",
+        prompt: stimArray[i]["word1"],
         name: "first-assoc_" + stimArray[i]["word1"],
-        placeholder: "Word",
       },
       {
         prompt: "",
         name: "second-assoc_" + stimArray[i]["word1"],
-        placeholder: "Word",
       },
       {
         prompt: "",
         name: "third-assoc_" + stimArray[i]["word1"],
-        placeholder: "Word",
       },
     ],
+    data: { cue: stimArray[i]["word1"] },
     on_finish: function (data) {
       console.log(data);
     },
@@ -123,6 +134,19 @@ var participant_info = {
 
 timeline.push(participant_info);
 
-// jsPsych.data.displayData("csv");
+var participant_lang = {
+  type: "survey-text",
+  questions: [{ prompt: "What is your native language?", name: "native_lang" }],
+};
+
+timeline.push(participant_lang);
+
+var thank = {
+  type: "html-button-response",
+  stimulus:
+    "<p>Thank you for participanting! Now you can tell all of your friends your <i>language age</i>!</p>",
+};
+
+timeline.push(thank);
 
 export default timeline;
