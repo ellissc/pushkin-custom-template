@@ -6,5 +6,6 @@ const task_queue = 'pushkintemplate_quiz_taskworker'; // for stuff that might ne
 
 const myController = new pushkin.ControllerBuilder();
 myController.setDefaultPasses(db_read_queue, db_write_queue, task_queue);
+myController.setDirectUse("/guessAge", (req, res, next) => {res.send(JSON.stringify({"guess": Math.floor(Math.random() * 100)}))}, "get");
 
 module.exports = myController;
