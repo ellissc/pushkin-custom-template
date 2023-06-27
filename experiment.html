@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Word Association Task</title>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.2"></script>
+    <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+
+/* initialize jsPsych */
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+         jsPsych.data.displayData("csv");
+       }
+    });
+/* ^^ see jsPsych documentation for header information
+    header & initialize not needed for Pushkin .js file */
+    /* equivalent line for experiment.js: */
+//import jsPsych from "pushkin-jspsych" */
+
+/*------ Define Stimulus Set -----
+in-line: most useful for testing experiment as an .html jsPsych project */
+var stimArray = [
+  {word1:"Cat"},
+  {word1:"Broadcast"},
+  {word1:"Torrent"},
+  {word1:"Icon"}];
+
+/* or load it via a .js file
+faster to edit and test when using jsPsych + Pushkin */
+//const stimArray = require("./stim.js").default
+
+/*----- Import or define consent form text -----*/
+//const consent = require("./consent.js").default;
+
+/*OR*/
+
+var consent = "<h1> Permission to take part in a human research study </h1><p>Consent text goes here as determined by your IRB.</br></br> Please read this consent statement carefully before deciding whether to participate. This is a massive online experiment about [insert topic here]. This research has no known risks or anticipated direct benefits. You will not receive compensation for participating in this experiment. </br> Your participation in this research is completely voluntary. </br> You can end your participation at any time without penalty. </br> Your participation is completely anonymous. </br></br> Please choose from the options below to either continue or leave the experiment.</p>"
+
+/*----- Initialize Experiment Timeline -----*/
+const timeline = [];
+
+/*----- Introduction / Consent -----*/
+
+var welcome = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: consent,
+  choices: ["Yes: Continue","No: Leave Experiment"],
+  /* on_finish section below compares the current button response and ends the experiment on this screen if participant does not consent to participate */ 
+  on_finish: function(data){
+    var data = jsPsych.data.get().last(1).values()[0];
+    if(data.response==1){
+      jsPsych.endExperiment('Goodbye!');
+    }
+  }
+};
+/* after all new screens use timeline.push(varname) to add it to the current run order */
+timeline.push(welcome);
+
+var if_consent = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus:    "<p>Welcome to the language age quiz! In this quiz, we'll show you some words and you'll provide up to three words that immediately come to mind. </br> Press the button to continue!</p>",
+  choices: ["Continue"],
+};
+timeline.push(if_consent);
+
+/*----- Instructions -----*/
+
+var instructions = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+         <h1>Instructions</h1>
+          <p>In this quiz, you will be asked to provide the first three words that come to mind for a cue!</p>
+          <p>Try to respond as quickly as you can. You do not need to fill all three boxes.</p>
+          </br>
+          <p>At the end of the quiz, we will use <b>advanced space-age artificial intelligence</b> guess your age based on your answers!</p>
+        `,
+  choices: ["Continue"],
+};
+timeline.push(instructions);
+
+/*----- Start of the example trials -----*/
+var example_trial1 = {
+  type: jsPsychSurveyHtmlForm,
+  html:
+    '\n\n\nHere is an example: <strong>potato</strong>. \nPlease enter the first three words that come to mind.</br>' + 
+    '<input type="text" id="test-resp-box" name="responseA" size="20"/></br>'+
+    '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
+    '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
+    autofocus: 'test-resp-box',
+    button_label: "Hit Enter to Move to the Next Word!"
+};
+
+timeline.push(example_trial1);
+
+var example_trial2 = {
+  type: jsPsychSurveyHtmlForm,
+  html:
+    '\n\n\nHere is another example: <strong>desk</strong>. \nPlease enter the first three words that come to mind.</br><p>' + 
+    '<input type="text" id="test-resp-box" name="responseA" size="20"/></br>'+
+    '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
+    '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
+    autofocus: 'test-resp-box',
+    button_label: "Hit Enter to Move to the Next Word!"
+};
+
+timeline.push(example_trial2);
+
+var example_feedback = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus:
+    "<p>Great job! Those were some good answers. Now for the real quiz!</p>",
+  choices: ["Continue"],
+};
+timeline.push(example_feedback);
+
+
+/*----- Start of the actual experiment -----*/
+// loops through all items in stimArray from start to finish
+for (var i = 0; i < stimArray.length; i++){
+var trial = {
+  type: jsPsychSurveyHtmlForm,
+      preamble: '<p> What are the first three words that come to mind?</p></br><strong>' + stimArray[i]["word1"],
+      html: '<p> </br>' + 
+    '<input type="text" id="test-resp-box" name="responseA" size="20"/></br>'+
+    '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
+    '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
+      autofocus: 'test-resp-box',
+      button_label: 'Hit Enter to Move to the Next Word!',     
+      // on_finish: function(data){console.log(data)
+       save_trial_parameters:{
+         preamble:true
+    }
+  }
+  timeline.push(trial);
+};
+
+
+/*----- "Hook" Feedback: guessing participant age -----*/
+var predicted_age = {
+  type: jsPsychHtmlButtonResponse,
+  /* NOTE: still need to insert model produced feedback */
+  stimulus:
+    "<p>The AI guessed that you are <b>497</b> years old. Was this correct?</p>",
+  choices: ["Yes!!!", "No..."],
+    on_finish: function(data){
+    var data = jsPsych.data.get().last(1).values()[0];
+    if(data.response==0){
+      jsPsych.endExperiment('Wonderful, thank you for participating in this experiment! </br> Your data helps us move science forward! </br> Goodbye!');
+    }
+  }
+};
+
+timeline.push(predicted_age);
+
+/* if the model guesses wrong, real age is collected */
+var participant_info = {
+  type: jsPsychSurveyText,
+  questions: [{ prompt: "What is your actual age?", name: "real_age" }],
+};
+
+/*----- End of Experiment -----*/
+var debrief = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "<p> Fun facts to share with participants & IRB required debriefing materials go here! </p>"
+}
+var goodbye = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus:"Thank you for participating in this experiment! </br> Your data helps us move science forward! </br> Goodbye!"
+}
+
+timeline.push(participant_info);
+timeline.push(goodbye);
+
+  jsPsych.run(timeline);
+  </script>
+</html>
