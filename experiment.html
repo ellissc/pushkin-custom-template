@@ -8,14 +8,33 @@
     <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.2"></script>
     <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+      .trial_fmt{
+        font-size: 150%;
+      }
+      .consent_form {
+        margin-left: 10%;
+        margin-right: 10%;
+        font-size: 15px;
+      }
+      p {
+        font-family: Geneva;
+        font-size: 125%;
+        margin-left: 10%;
+        margin-right: 10%;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+  </body>
   <script>
 
 /* initialize jsPsych */
     var jsPsych = initJsPsych({
       on_finish: function() {
          jsPsych.data.displayData("csv");
+         /*could edit the 'mydata.csv' as a dynamic filename by participant ID*/
+         jsPsych.data.get().localSave('csv','mydata.csv');
        }
     });
 /* ^^ see jsPsych documentation for header information
@@ -24,15 +43,15 @@
 //import jsPsych from "pushkin-jspsych" */
 
 /*------ Define Stimulus Set -----
-in-line: most useful for testing experiment as an .html jsPsych project */
+in-line: most useful for quickly testing experiment as an .html jsPsych project */
 var stimArray = [
   {word1:"Cat"},
   {word1:"Broadcast"},
   {word1:"Torrent"},
   {word1:"Icon"}];
 
-/* or load it via a .js file
-faster to edit and test when using jsPsych + Pushkin */
+/* or load it via a .js file -----
+edit and test when using jsPsych + Pushkin */
 //const stimArray = require("./stim.js").default
 
 /*----- Import or define consent form text -----*/
@@ -51,6 +70,7 @@ var welcome = {
   type: jsPsychHtmlButtonResponse,
   stimulus: consent,
   choices: ["Yes: Continue","No: Leave Experiment"],
+  css_classes: ["consent_form"],
   /* on_finish section below compares the current button response and ends the experiment on this screen if participant does not consent to participate */ 
   on_finish: function(data){
     var data = jsPsych.data.get().last(1).values()[0];
@@ -64,7 +84,7 @@ timeline.push(welcome);
 
 var if_consent = {
   type: jsPsychHtmlButtonResponse,
-  stimulus:    "<p>Welcome to the language age quiz! In this quiz, we'll show you some words and you'll provide up to three words that immediately come to mind. </br> Press the button to continue!</p>",
+  stimulus:    "<h1>Welcome to the language age quiz!</h1><p>In this quiz, we'll show you some words and you'll provide up to three words that immediately come to mind. </br> Press the button to continue!</p>",
   choices: ["Continue"],
 };
 timeline.push(if_consent);
@@ -84,6 +104,8 @@ var instructions = {
 };
 timeline.push(instructions);
 
+
+
 /*----- Start of the example trials -----*/
 var example_trial1 = {
   type: jsPsychSurveyHtmlForm,
@@ -93,7 +115,8 @@ var example_trial1 = {
     '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
     '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
     autofocus: 'test-resp-box',
-    button_label: "Hit Enter to Move to the Next Word!"
+    button_label: "Hit Enter to Move to the Next Word!",
+    css_classes: ["trial_fmt"],
 };
 
 timeline.push(example_trial1);
@@ -101,12 +124,13 @@ timeline.push(example_trial1);
 var example_trial2 = {
   type: jsPsychSurveyHtmlForm,
   html:
-    '\n\n\nHere is another example: <strong>desk</strong>. \nPlease enter the first three words that come to mind.</br><p>' + 
+    '\n\n\nHere is another example: <strong>desk</strong>. \nPlease enter the first three words that come to mind.</br>' + 
     '<input type="text" id="test-resp-box" name="responseA" size="20"/></br>'+
     '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
     '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
     autofocus: 'test-resp-box',
-    button_label: "Hit Enter to Move to the Next Word!"
+    button_label: "Hit Enter to Move to the Next Word!",
+    css_classes: ["trial_fmt"],
 };
 
 timeline.push(example_trial2);
@@ -131,7 +155,8 @@ var trial = {
     '<input type="text" id="test-resp-boxB" name="responseB" size="20" /></br>'+
     '<input type="text" id="test-resp-boxC" name="responseC" size="20" /></p>',
       autofocus: 'test-resp-box',
-      button_label: 'Hit Enter to Move to the Next Word!',     
+      button_label: 'Hit Enter to Move to the Next Word!',
+      css_classes: ["trial_fmt"],     
       // on_finish: function(data){console.log(data)
        save_trial_parameters:{
          preamble:true
